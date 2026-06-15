@@ -1,0 +1,29 @@
+# materialize manifest — construct M3 (adversarial air gap), instance #1.
+#
+# The coldness boundary for the cold Gemini attacker, made auditable. Phase A is blind
+# to the lab's framing (code + brief only); Phase B adds the spec + the world-grounded
+# target. The materializer copies ONLY what each phase lists; the tripwire denylist
+# (.git, .substrate, *FINDINGS*, ROADMAP, README) is the fail-closed backstop.
+
+name = "construct-m3"
+source_root = "/Users/macos-user/.projects/stack-research/construct"
+brief = "runs/m3/redteam_brief.md"
+
+# Extends the built-in tripwire (.git, .substrate, *FINDINGS*). These carry the air-gap
+# thesis / loses-cell answers and must never reach the attacker in any phase.
+forbidden = ["ROADMAP.md", "README.md", "QUOTES.md", "PLAYLIST.md"]
+
+[phases.phase_a]
+description = "Phase A — blind to the lab's framing. The harness source + the brief only; re-derive what moves from select_offers, surface unknown-unknowns."
+read = ["harness"]
+writable = ["runs/m3"]
+
+[phases.phase_b]
+description = "Phase B — full spec. Confirm the named cells (AG-1/AG-channel/IN-1/IN-loses); try to EXCEED them; attack the world-grounded retraction chain (rw-0001)."
+read = [
+    "harness",
+    "notes/SPEC_M3_ADVERSARIAL_AIR_GAP.md",
+    "episodes/m2",
+    "corpus/retractions",
+]
+writable = ["runs/m3"]
