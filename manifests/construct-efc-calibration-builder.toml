@@ -1,0 +1,41 @@
+# Cold filesystem boundary for the EFC calibration machinery builder.
+#
+# The builder receives the repo operating contract, sealed Part I, the accepted
+# calibration design, implementation source/tests, and a few episode shapes.
+# It does not receive substrate threads, findings, run evidence, corpora,
+# calibration facts, or the EFC build traceability narrative.
+
+name = "construct-efc-calibration-builder"
+source_root = "/Users/macos-user/.projects/stack-research/construct"
+brief = "notes/EFC_CALIBRATION_BUILDER_BRIEF.md"
+
+# Extends materialize's built-in .git/.substrate/*FINDINGS* tripwire.
+forbidden = [
+  "EFC_TRACEABILITY.md",
+  "PLAYLIST.md",
+  "QUOTES.md",
+  "runs",
+  "corpus",
+  "epistemic-frame-check-v0-calibration",
+  "epistemic-frame-check-v0-build",
+]
+
+[phases.builder]
+description = "Cold EFC machinery builder: sealed contract + accepted packet design + implementation source, with all discussion, evidence, sources, and fixture facts absent."
+read = [
+  "AGENTS.md",
+  "README.md",
+  "notes/ROADMAP.md",
+  "notes/GLOSSARY.md",
+  "notes/SPEC_EPISTEMIC_FRAME_CHECK_V0.md",
+  "notes/EFC_CALIBRATION_PACKET_DESIGN.md",
+  "Makefile",
+  "pyproject.toml",
+  "uv.lock",
+  "harness",
+  "tests",
+  "episodes/smoke-001.json",
+  "episodes/conflict-001.json",
+  "episodes/poison-001.json",
+]
+writable = ["harness", "tests", "builder_out"]
