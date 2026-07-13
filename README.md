@@ -15,14 +15,16 @@
 > construction.
 
 The general capability: turn a *declaration* of "what may be present" into a concrete,
-standing workspace that contains exactly that and provably nothing else. Its **first job** is
-red-team coldness — sealing an attacker away from a system's design discussion so its blind
-spots are its own. That job is just the first; the spine is not *about* red-teaming.
+standing workspace that contains exactly that and provably nothing else. Its **first job**
+was red-team coldness — sealing an attacker away from a system's design discussion so its
+blind spots are its own. The **second proven shape is constructive**: a cold *builder* seat
+(construct's EFC calibration machinery, 2026-07-12/13) implementing against a sealed spec
+inside a workspace that simply does not contain the design discussion, the evidence, or the
+facts it must not touch. Same spine, opposite role — the tool is not *about* red-teaming.
 
 Sibling pattern is [`substrate`](../substrate): a small tool, used in anger immediately, that
-becomes infrastructure. (And substrate is the **second consumer** — its red-team lands this
-week.) The lab's way: prove a capability in one concrete job, then lift it out as its own
-thing.
+becomes infrastructure. The lab's way: prove a capability in one concrete job, then lift it
+out as its own thing.
 
 ## The spine: `materialize.py`
 
@@ -71,7 +73,9 @@ narrated; loses/breach cells ship first) and the sealed cold-attacker discipline
 | `materialize.py` | the workspace materializer (the spine — the general capability) | **yes** |
 | `PROTOCOL.md` | the red-team protocol (first application) | **yes** |
 | `templates/redteam_brief.template.md` | the ROE, with the SUT-specific bits parameterized | **yes** |
-| `manifests/construct-m3.toml` | consumer #1 — construct M3's coldness boundary, committed + auditable | per-SUT |
+| `manifests/construct-m3.toml` | consumer #1 — construct M3's red-team coldness boundary, committed + auditable | per-SUT |
+| `manifests/construct-efc-calibration-builder.toml` | consumer #2 — construct's cold EFC *builder* seat (constructive shape) | per-SUT |
+| `manifests/construct-bootstrap.toml` | probe instance — construct's cold M-1 bootstrap read-surface, made physical | per-SUT |
 | `tests/test_materialize.py` | spine smoke (whitelist copy, tripwire abort, audit) | — |
 
 ## The SUT contract (thin)
@@ -85,7 +89,7 @@ the loses-first discipline.
 
 ## Status
 
-**v0 — validated on its first real job.** The spine is built and tested (4/4). Its first
+**v0 — validated on two unlike real jobs.** The spine is built and tested (4/4). Its first
 consumer, **construct M3 (adversarial air gap), closed 2026-06-15** — and materialize was the
 sealed environment for the whole thing: a cold, off-thread, cross-vendor (Gemini) red-team ran
 two phases entirely inside a materialized workspace, blind to the spec in Phase A and to the
@@ -96,7 +100,23 @@ loop caught a milestone-inverting bug a reviewer had accepted — which is the d
 the attacker away from the defenders' conclusions. The construct-M3 instance lives at
 `manifests/construct-m3.toml`.
 
-Consumers: **construct M3** (✅ first — validated) and **substrate's red-team** (next — the
-second SUT, a different shape, is what earns the *general* name). Deliberately **not coupled**
-into either SUT: their runners (construct's `run_m3.py` / `score_redteam.py`) stay standalone
-until materialize stabilizes across both — prove in one job, then lift out.
+**Second validated job — the constructive shape (2026-07-12/13).** Construct's EFC
+calibration-machinery **builder** ran three implementation/correction/closure rounds as a
+cold seat inside one standing materialized workspace
+(`manifests/construct-efc-calibration-builder.toml`): sealed spec + accepted design +
+implementation source present; the substrate design threads, findings, run evidence,
+corpora, and fixture facts **absent by construction** (a per-manifest `forbidden` list
+extends the built-in tripwire). The audit round-tripped byte-identical across all three
+rounds, 272 tests passed inside the workspace, and two independent cold auditors passed the
+result A–G — with the builder's received-context *declaration* backed by
+`MATERIALIZE_AUDIT.json` per-file hashes instead of testimony. The role inverted (builder,
+not attacker) and the spine didn't care: that inversion is what earns the *general* name.
+One naming wrinkle carried honestly: the brief still lands in the workspace as
+`REDTEAM_BRIEF.md` even for a builder — a rename (`BRIEF.md`) is future work, not done
+quietly here.
+
+Consumers: **construct M3** (✅ red-team — validated), **construct EFC builder**
+(✅ constructive — validated), **substrate's red-team** (planned). A third instance,
+`construct-bootstrap.toml`, materializes the M-1 cold-bootstrap read surface as a probe.
+Deliberately **not coupled** into any SUT: their runners stay standalone until materialize
+stabilizes across consumers — prove in one job, then lift out.
