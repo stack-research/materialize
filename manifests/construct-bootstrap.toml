@@ -1,0 +1,29 @@
+# materialize manifest — construct cold M-1 bootstrap.
+#
+# A first-time agent's coldness boundary, made physical: exactly the UNCONDITIONAL
+# required-read file surface (cf. runs/bootstrap/*.json read_order), and provably
+# nothing else. Honest by construction, NOT a tuned omission — `notes/previous/` (the
+# founding, where the two-plane lineage ancestor lives) is simply not on the
+# unconditional path, so it is absent here by the read whitelist. A bootstrap that uses
+# two-plane vocabulary in this workspace is therefore cold on that ancestor — the real
+# occlusion route_watch surfaces from the audit. Per SPEC_X4 §7 this is MACHINERY
+# (re-finding the known bridge-glossary wound), `not_engaged` as evidence the organ
+# works; never a pass condition.
+#
+# (.substrate threads are off by materialize's default tripwire, so the real bootstrap's
+# thread-2 read is not reproduced here — file surface only.)
+
+name = "construct-bootstrap"
+source_root = "/Users/macos-user/.projects/stack-research/construct"
+
+[phases.bootstrap]
+description = "Cold M-1 bootstrap: the unconditional required-read file surface only. No conditional 'Open only when' bridge-glossary edge; no notes/previous founding; no findings."
+read = [
+    "AGENTS.md",
+    "README.md",
+    "notes/ROADMAP.md",
+    "notes/GLOSSARY.md",
+    "notes/SPEC_V1X_BOUNDARY_MECHANISMS.md",
+    "episodes/probes",
+]
+writable = ["runs/bootstrap"]
