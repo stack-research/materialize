@@ -21,8 +21,9 @@ what the system-under-test (SUT) is.
 
 ### Wall I — capability is declared and bounded, enforced (not requested)
 
-The attacker's power is a **named surface**; everything else is the organ under test. The
-bound is not a courtesy — it *is* the experiment. It is enforced two ways:
+The attacker's power is a **named surface**; everything else is the **organ** under test —
+construct's word for a governed decision-making mechanism of the system (the mechanism, not
+the invariant about it). The bound is not a courtesy — it *is* the experiment. It is enforced two ways:
 
 - **Coldness by construction.** The attacker runs in a workspace that contains *only* the
   declared-readable surface. It cannot read the design discussion because the discussion is

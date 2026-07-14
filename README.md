@@ -52,7 +52,10 @@ sibling of this repo), and `--source` overrides it either way.
 ## First job: red-team coldness
 
 A claim that *"an attacker cannot move this organ"* is only worth believing if a **maximally
-capable** adversary — white-box, optimizing to win — **still cannot** move it. So you hand
+capable** adversary — white-box, optimizing to win — **still cannot** move it. (*Organ* is
+construct's vocabulary: a governed decision-making mechanism of the system — the mechanism
+itself, not the invariant about it; the invariant under test is that the attacker cannot
+move it.) So you hand
 the attacker every advantage, and decide the outcome by **construction**, never testimony.
 
 The sharpest "by construction" is the attacker's own **coldness**. A red-team told *"please
