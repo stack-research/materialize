@@ -14,7 +14,8 @@
 # thread-2 read is not reproduced here — file surface only.)
 
 name = "construct-bootstrap"
-source_root = "/Users/macos-user/.projects/stack-research/construct"
+# Relative paths resolve against this manifest file (see resolve_source); override with --source.
+source_root = "../../construct"
 
 [phases.bootstrap]
 description = "Cold M-1 bootstrap: the unconditional required-read file surface only. No conditional 'Open only when' bridge-glossary edge; no notes/previous founding; no findings."

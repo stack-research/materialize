@@ -16,7 +16,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
-from materialize import materialize, verify_workspace  # noqa: E402
+from materialize import materialize, resolve_source, verify_workspace  # noqa: E402
 
 
 def _fake_repo() -> pathlib.Path:
@@ -104,6 +104,47 @@ def test_explicit_spec_read_is_allowed_phase_b():
     assert (dest / "notes" / "SPEC.md").is_file()
     assert not (dest / "notes" / "M2_FINDINGS.md").exists()  # the sibling findings did NOT come along
     print("ok  phase B: an explicit spec read lands; the sibling findings file stays out")
+
+
+def test_missing_declared_brief_is_refused():
+    """A manifest that declares a brief which does not exist is a misconfiguration —
+    refuse and remove the workspace rather than seat an occupant with no rules."""
+    root = _fake_repo()
+    (root / "brief.md").unlink()
+    dest = pathlib.Path(tempfile.mkdtemp()) / "ws"
+    try:
+        materialize(_manifest(root), "phase_a", root, dest)
+        raise AssertionError("a missing declared brief should abort")
+    except SystemExit as e:
+        assert "brief" in str(e), e
+    assert not dest.exists(), "workspace must be removed when the declared brief is missing"
+    print("ok  missing declared brief: refused, workspace removed")
+
+
+def test_verify_flags_a_planted_forbidden_dir():
+    """Defense in depth: verify_workspace reports a forbidden dir that appears in a
+    workspace after materialization (e.g. a stray .git), not just forbidden files."""
+    root = _fake_repo()
+    dest = pathlib.Path(tempfile.mkdtemp()) / "ws"
+    materialize(_manifest(root), "phase_a", root, dest)
+    (dest / ".git").mkdir()
+    assert ".git" in verify_workspace(dest, [".git"])
+    print("ok  verify: a planted .git dir is flagged, not silently skipped")
+
+
+def test_resolve_source_is_manifest_relative():
+    """A relative source_root resolves against the manifest file, so committed
+    manifests carry no machine-specific absolute paths; --source overrides."""
+    base = pathlib.Path(tempfile.mkdtemp())
+    mpath = base / "manifests" / "sut.toml"
+    assert resolve_source({"source_root": "../../sut"}, mpath) == (base.parent / "sut").resolve()
+    assert resolve_source({"source_root": "ignored"}, mpath, override=str(base)) == base.resolve()
+    try:
+        resolve_source({}, mpath)
+        raise AssertionError("no source_root and no --source should abort")
+    except SystemExit:
+        pass
+    print("ok  resolve_source: manifest-relative, --source override, fails without either")
 
 
 if __name__ == "__main__":

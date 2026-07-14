@@ -48,6 +48,22 @@ def load_manifest(path: str | Path) -> dict:
         return tomllib.load(f)
 
 
+def resolve_source(manifest: dict, manifest_path: str | Path,
+                   override: str | None = None) -> Path:
+    """The source repo root: --source wins; otherwise the manifest's `source_root`,
+    resolved relative to the manifest file itself (so manifests stay portable —
+    no machine-specific absolute paths committed)."""
+    if override:
+        return Path(override).resolve()
+    sr = manifest.get("source_root")
+    if not sr:
+        raise SystemExit("no source_root (pass --source or set it in the manifest)")
+    p = Path(sr).expanduser()
+    if not p.is_absolute():
+        p = Path(manifest_path).resolve().parent / p
+    return p.resolve()
+
+
 def _is_forbidden(rel: Path, forbidden: list[str]) -> bool:
     parts = set(rel.parts)
     for pat in forbidden:
@@ -83,7 +99,14 @@ def verify_workspace(dest: Path, forbidden: list[str]) -> list[str]:
     """Re-scan a materialized workspace; return any forbidden paths present (should be [])."""
     leaked = []
     for root, dirs, files in os.walk(dest):
-        dirs[:] = [d for d in dirs if d != ".git"]
+        keep = []
+        for d in dirs:
+            rel = (Path(root) / d).relative_to(dest)
+            if _is_forbidden(rel, forbidden):
+                leaked.append(str(rel))  # flag the dir itself; no need to descend
+            else:
+                keep.append(d)
+        dirs[:] = keep
         for fn in files:
             rel = (Path(root) / fn).relative_to(dest)
             if rel.name in _PLACED:
@@ -128,14 +151,18 @@ def materialize(manifest: dict, phase: str, source_root: str | Path,
             shutil.copy2(abspath, out)
             copied.append(rel)
 
-    # The ROE brief, placed as the attacker's standing instruction.
+    # The ROE brief, placed as the seat's standing instruction. A declared brief that
+    # is missing is a misconfiguration, not an omission — fail loudly, don't ship a
+    # workspace whose occupant was never given its rules.
     brief_rel = manifest.get("brief")
     brief_placed = False
     if brief_rel:
         bsrc = src / brief_rel
-        if bsrc.is_file():
-            shutil.copy2(bsrc, dest / BRIEF_NAME)
-            brief_placed = True
+        if not bsrc.is_file():
+            shutil.rmtree(dest, ignore_errors=True)
+            raise SystemExit(f"declared brief not found: {brief_rel} — workspace removed")
+        shutil.copy2(bsrc, dest / BRIEF_NAME)
+        brief_placed = True
 
     # Empty writable dirs for the attacker's fixtures + ledgers.
     for w in ph.get("writable", []):
@@ -172,10 +199,7 @@ def main() -> int:
     args = p.parse_args()
 
     manifest = load_manifest(args.manifest)
-    source = args.source or manifest.get("source_root")
-    if not source:
-        print("no source_root (pass --source or set it in the manifest)", file=sys.stderr)
-        return 1
+    source = resolve_source(manifest, args.manifest, args.source)
     audit = materialize(manifest, args.phase, source, args.dest, force=args.force)
     print(f"materialized {audit['manifest']}/{audit['phase']} -> {args.dest}")
     print(f"  {audit['file_count']} files readable; brief={audit['brief']}; "

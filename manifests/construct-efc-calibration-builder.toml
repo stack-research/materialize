@@ -6,7 +6,8 @@
 # calibration facts, or the EFC build traceability narrative.
 
 name = "construct-efc-calibration-builder"
-source_root = "/Users/macos-user/.projects/stack-research/construct"
+# Relative paths resolve against this manifest file (see resolve_source); override with --source.
+source_root = "../../construct"
 brief = "notes/EFC_CALIBRATION_BUILDER_BRIEF.md"
 
 # Extends materialize's built-in .git/.substrate/*FINDINGS* tripwire.

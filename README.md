@@ -18,11 +18,12 @@ The general capability: turn a *declaration* of "what may be present" into a con
 standing workspace that contains exactly that and provably nothing else. Its **first job**
 was red-team coldness — sealing an attacker away from a system's design discussion so its
 blind spots are its own. The **second proven shape is constructive**: a cold *builder* seat
-(construct's EFC calibration machinery, 2026-07-12/13) implementing against a sealed spec
+([`construct`](https://github.com/stack-research/construct)'s EFC calibration machinery,
+2026-07-12/13) implementing against a sealed spec
 inside a workspace that simply does not contain the design discussion, the evidence, or the
 facts it must not touch. Same spine, opposite role — the tool is not *about* red-teaming.
 
-Sibling pattern is [`substrate`](../substrate): a small tool, used in anger immediately, that
+Sibling pattern is [`substrate`](https://github.com/stack-research/substrate): a small tool, used in anger immediately, that
 becomes infrastructure. The lab's way: prove a capability in one concrete job, then lift it
 out as its own thing.
 
@@ -35,6 +36,11 @@ containing exactly the declared-readable surface — nothing else.
 uv run --no-project python materialize.py \
     --manifest manifests/construct-m3.toml --phase phase_a --dest /tmp/materialize-cm3-a
 ```
+
+Stdlib only, Python ≥ 3.11 (`tomllib`) — no dependencies to audit in the thing that
+guarantees your isolation. A manifest's `source_root` may be relative; it resolves against
+the manifest file itself (the committed manifests here expect `construct` checked out as a
+sibling of this repo), and `--source` overrides it either way.
 
 - **Whitelist by intent** — only `read` paths are copied (absence by construction).
 - **Fail-closed tripwire** — a denylist (`.git`, `.substrate`, `*FINDINGS*`, …) is scanned
@@ -89,7 +95,7 @@ the loses-first discipline.
 
 ## Status
 
-**v0 — validated on two unlike real jobs.** The spine is built and tested (4/4). Its first
+**v0 — validated on two unlike real jobs.** The spine is built and tested (7/7). Its first
 consumer, **construct M3 (adversarial air gap), closed 2026-06-15** — and materialize was the
 sealed environment for the whole thing: a cold, off-thread, cross-vendor (Gemini) red-team ran
 two phases entirely inside a materialized workspace, blind to the spec in Phase A and to the
@@ -120,3 +126,7 @@ Consumers: **construct M3** (✅ red-team — validated), **construct EFC builde
 `construct-bootstrap.toml`, materializes the M-1 cold-bootstrap read surface as a probe.
 Deliberately **not coupled** into any SUT: their runners stay standalone until materialize
 stabilizes across consumers — prove in one job, then lift out.
+
+## License
+
+MIT — see [LICENSE](LICENSE).

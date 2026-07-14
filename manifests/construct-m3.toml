@@ -6,7 +6,8 @@
 # (.git, .substrate, *FINDINGS*, ROADMAP, README) is the fail-closed backstop.
 
 name = "construct-m3"
-source_root = "/Users/macos-user/.projects/stack-research/construct"
+# Relative paths resolve against this manifest file (see resolve_source); override with --source.
+source_root = "../../construct"
 brief = "runs/m3/redteam_brief.md"
 
 # Extends the built-in tripwire (.git, .substrate, *FINDINGS*). These carry the air-gap
