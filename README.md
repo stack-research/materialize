@@ -55,15 +55,16 @@ A claim that *"an attacker cannot move this organ"* is only worth believing if a
 capable** adversary — white-box, optimizing to win — **still cannot** move it. (*Organ* is
 construct's vocabulary: a governed decision-making mechanism of the system — the mechanism
 itself, not the invariant about it; the invariant under test is that the attacker cannot
-move it.) So you hand
-the attacker every advantage, and decide the outcome by **construction**, never testimony.
+move it.) So you hand the attacker every advantage, and decide the outcome by
+**construction**, never testimony.
 
 The sharpest "by construction" is the attacker's own **coldness**. A red-team told *"please
 don't read the design thread"* is a control enforced by request — the weakness a serious lab
 refuses everywhere else. `materialize` enforces it by **absence**: the attacker runs in a
 workspace that does not contain the thread, the spec, or the findings, so it cannot read
 them. The attacker then operates entirely inside the workspace (`uv run --directory <ws> …`);
-it has the SUT's harness and nothing of the SUT's design. Verified for construct M3:
+it has the system-under-test's (SUT's) harness and nothing of its design. Verified for
+construct M3:
 
 ```
 workspace top level:  harness/  runs/m3/  REDTEAM_BRIEF.md  MATERIALIZE_AUDIT.json
